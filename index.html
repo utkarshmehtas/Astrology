@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Astrology Quiz</title>
+
+  <style>
+    * { box-sizing: border-box; font-family: Arial, sans-serif; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #0b0f2b, #120f3a);
+      color: #fff;
+    }
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: rgba(255,255,255,0.08);
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    }
+    h1 { font-size: 20px; text-align: center; margin-bottom: 12px; }
+    p { font-size: 14px; text-align: center; opacity: 0.9; }
+    .options { display: grid; gap: 12px; margin-top: 20px; }
+    button {
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      background: #6f7dff;
+      color: #fff;
+      font-size: 15px;
+      cursor: pointer;
+    }
+    button:hover { opacity: 0.9; }
+    input {
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      width: 100%;
+      font-size: 15px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- QUIZ -->
+<div class="card" id="quiz">
+  <h1 id="question"></h1>
+  <p id="subtitle"></p>
+  <div class="options" id="options"></div>
+</div>
+
+<!-- RESULT PAGE -->
+<div class="card" id="result" style="display:none;">
+  <h1>Your Astrology Snapshot ✨</h1>
+  <p id="resultText"></p>
+  <div class="options">
+    <button id="proceedToForm">Get Full Personalized Report</button>
+  </div>
+</div>
+
+<!-- FORM + PAYMENT PAGE -->
+<div class="card" id="form" style="display:none;">
+  <h1>Share Your Details 🔮</h1>
+  <p>
+    After payment, our team will share a Personalized Birth Chart with you (within 24 hours).
+  </p>
+
+  <form
+    action="https://formspree.io/f/xlgegabk"
+    method="POST"
+    onsubmit="setTimeout(() => { window.location.href='https://buy.stripe.com/3cIdR20dn9Ac2s06er0kE04'; }, 500);"
+  >
+    <!-- Hidden quiz data -->
+    <input type="hidden" name="Gender" id="genderField">
+    <input type="hidden" name="Zodiac" id="zodiacField">
+
+    <!-- User details -->
+    <input type="text" name="Name" placeholder="Your Full Name" required>
+    <input type="email" name="Email" placeholder="Your Email" required>
+    <input type="date" name="Date of Birth" required>
+    <input type="time" name="Time of Birth" required>
+    <input type="text" name="Place of Birth" placeholder="Place of Birth" required>
+
+    <div class="options">
+      <button type="submit">Proceed to Payment</button>
+    </div>
+  </form>
+</div>
+
+<script>
+const steps = [
+  { q: 'What is your gender?', options: ['Female', 'Male', 'Other'], key: 'gender' },
+  { q: 'What is your zodiac sign?', options: [
+    'Aries','Taurus','Gemini','Cancer','Leo','Virgo',
+    'Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'
+  ], key: 'zodiac' },
+  { q: 'What is your birth date (DD only)?', options: [
+    '01','02','03','04','05','06','07','08','09','10',
+    '11','12','13','14','15','16','17','18','19','20',
+    '21','22','23','24','25','26','27','28','29','30','31'
+  ], key: 'birthDate' }
+];
+
+let current = 0;
+let answers = {};
+
+const questionEl = document.getElementById('question');
+const subtitleEl = document.getElementById('subtitle');
+const optionsEl = document.getElementById('options');
+
+function render() {
+  const step = steps[current];
+  questionEl.innerText = step.q;
+  subtitleEl.innerText = 'Tap one option to continue';
+  optionsEl.innerHTML = '';
+
+  step.options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.innerText = opt;
+    btn.onclick = () => next(opt);
+    optionsEl.appendChild(btn);
+  });
+}
+
+function next(value) {
+  answers[steps[current].key] = value;
+  current++;
+
+  if (current >= steps.length) {
+    showResult();
+  } else {
+    render();
+  }
+}
+
+function showResult() {
+  document.getElementById('quiz').style.display = 'none';
+  document.getElementById('result').style.display = 'block';
+
+  // Simple placeholder text (you can replace with full content later)
+  let text = `Zodiac Sign: ${answers.zodiac}\n\n`;
+
+
+
+
+const traits = {
+    Aries: 'Aries is ruled by the planet Mars, symbolizing energy, courage, and strength. People born under this sign are enthusiastic starters who love initiating new projects, though they may struggle to see them through to the end. They embrace challenges fearlessly and pursue their goals with determination. With a natural warrior spirit, Arians are brave and assertive but can be short-tempered at times. Their adventurous nature drives them to explore new ideas and experiences constantly. Independent and self-reliant, they prefer leading rather than following. Honest and straightforward, they communicate with clarity and value loyalty in both family and friendships. In love, they are passionate, devoted, and protective of their partners. Arians enjoy stepping out of their comfort zone and tackling difficult situations. Careers that suit them include leadership roles, entrepreneurship, sports, creative fields, and professions requiring initiative and courage.',
+
+
+    Taurus: 'Taurus is ruled by Venus, representing comfort, beauty, and pleasure. They are grounded, reliable, and value stability in life and work. These individuals are practical and prefer dealing with tangible, real-world matters. Taureans can be stubborn and resistant to change, often sticking to what feels familiar. Loyal and devoted, they form strong bonds with family and friends. They appreciate routine and take a steady approach to life, ensuring things are done correctly. Taureans enjoy indulging in pleasures and can sometimes be lazy or self-indulgent. They have a sharp eye for detail and remember things well. In love, they are affectionate, committed, and protective of their partners. Careers suited to them include finance, real estate, hospitality, art, and administration.',
+
+
+    Gemini: 'Geminis are ruled by Mercury, giving them a curious and adaptable mind. They love learning, asking questions, and exploring new ideas. These individuals are excellent communicators and can charm almost anyone with their wit. They have a dual nature, which makes them versatile but sometimes indecisive. Social and lively, they enjoy making new friends and engaging in interesting conversations. Geminis need mental stimulation and can get bored easily without it. They are clever, mischievous, and have a good sense of humor. In relationships, they are fun, devoted, and affectionate once committed. They are quick learners and can handle multiple interests simultaneously. Careers that suit them include sales, teaching, media, acting, and creative communication.',
+
+
+    Cancer: 'Cancer is ruled by the Moon, giving them a nurturing and empathetic nature. They are deeply emotional and can sense the feelings of others intuitively. These individuals are ambitious but prefer indirect approaches to achieving goals. Family and home life are extremely important to them, and they value loyalty above all. Cancers are imaginative and creative, often excelling in storytelling or artistic pursuits. They can be moody and require emotional reassurance from loved ones. Naturally caring, they make excellent friends, partners, and counselors. They enjoy collecting memories and are sentimental by nature. In love, they are devoted, romantic, and protective. Careers that suit them include teaching, psychology, design, social work, and the culinary arts.',
+
+
+    Leo: 'Leo is ruled by the Sun, making them confident, bold, and charismatic. They are natural leaders and enjoy being admired and appreciated. These individuals are ambitious, passionate, and adventurous, with a strong desire to achieve success. Leos are generous, warm, and protective of their loved ones. They have a creative streak and often pursue art, entertainment, or leadership roles. Honest and loyal, they value strong friendships and social connections. Leos can be dominant and temperamental but are quick to forgive. They have a regal presence and carry themselves with pride and confidence. In love, they are passionate, devoted, and expect intellectual equality. Careers suited for them include acting, music, leadership roles, marketing, and sports.',
+
+
+    Virgo: 'Virgo is ruled by Mercury, making them analytical, meticulous, and practical. They are hardworking, reliable, and always strive for perfection in their work. Virgos are detail-oriented and excel at solving complex problems. They are conservative by nature and prefer calm, orderly environments. These individuals are observant and can read people well, making them excellent managers or recruiters. They value organization and symmetry, approaching tasks methodically. Virgos care about health, diet, and routine, sometimes being critical of themselves or others. They are loyal and dependable partners, taking relationships seriously. Their analytical skills make them quick learners and problem-solvers. Careers suited for them include research, data analysis, medicine, writing, and quality control.',
+
+
+    Libra: 'Libra is ruled by Venus, giving them a balanced, fair, and harmonious nature. They carefully weigh options before making decisions and are considerate of others’ needs. Libras are social, diplomatic, and excellent at negotiating conflicts. They enjoy pleasant surroundings and thrive in cooperative, peaceful environments. These individuals are generous, loyal, and value meaningful relationships. They prefer inclusion and teamwork, often thinking in terms of “we” rather than “I.” Libras can struggle to say no and may tolerate too much to keep harmony. They are ambitious, intelligent, and seek beauty and balance in all aspects of life. In love, they are affectionate, committed, and thoughtful partners. Careers suited for them include law, diplomacy, mediation, social work, and event management.',
+
+
+    Scorpio: 'Scorpio is ruled by Mars, giving them passion, courage, and intensity. They are determined, ambitious, and never shy away from challenges. Scorpios are loyal to friends and protective of loved ones. They are highly intuitive, able to sense motives and intentions easily. These individuals can be secretive, introspective, and emotionally deep. Scorpios are strong-willed and rarely change their minds once decided. They can be intense in love, devoted, and sometimes possessive. They approach life in chapters, letting go of what no longer serves them. They enjoy mystery, exploration, and uncovering hidden truths. Careers suited for them include research, psychology, investigation, law enforcement, and crisis management.',
+
+
+    Sagittarius: 'Sagittarius is ruled by Jupiter, making them optimistic, adventurous, and intellectually curious. They love exploring new ideas, cultures, and experiences. These individuals are confident, honest, and open-minded, though sometimes impulsive. They have a strong sense of spirituality and a positive outlook on life. Sagittarians are energetic and enjoy outdoor activities and travel. They value freedom and prefer relationships with intellectual and expressive partners. They are encouraging, generous, and supportive of friends. They can be boastful or overconfident at times but remain fun-loving and lively. Sagittarians think carefully before making important decisions. Careers suited for them include travel, education, writing, journalism, adventure sports, and diplomacy.',
+
+
+    Capricorn: 'Capricorn is ruled by Saturn, making them disciplined, practical, and ambitious. They work hard to achieve their goals and value responsibility. Capricorns are patient, serious, and focused on long-term success. They prefer creating their own opportunities rather than leaving things to chance. These individuals are careful decision-makers and maintain high standards in life. Capricorns are reliable, introverted, and value their reputation. They are persistent, determined, and prepared to overcome obstacles. They can be strict but are also dependable and trustworthy. In love, they are dedicated and committed partners. Careers suited for them include business, finance, law, engineering, and leadership roles.',
+
+
+    Aquarius: 'Aquarius is ruled by Saturn, making them independent, innovative, and forward-thinking. They have a unique approach to life and often think outside the box. Aquarians are intelligent, original, and value freedom in all aspects of life. They can be reserved at first but are observant and thoughtful. These individuals combine tradition with innovation, applying creative solutions to problems. They are introverted but form meaningful relationships based on mutual respect and understanding. Aquarians care deeply about humanity and social causes. They are logical, fair, and maintain strong principles. In love, they allow space and freedom while being loyal. Careers suited for them include science, research, technology, media, and creative philanthropy.',
+
+
+    Pisces: 'Pisces is ruled by Jupiter, making them compassionate, intuitive, and empathetic. They are selfless, often putting others’ needs before their own. Pisceans are highly sensitive and can be deeply affected by the emotions of those around them. They are creative, romantic, and loyal in relationships. These individuals can be indecisive or easily influenced but remain kind-hearted. They have strong spiritual and imaginative abilities. Pisceans may struggle to express their frustrations but remain patient and forgiving. They have a natural ability to inspire and help others. Careers suited for them include healing professions, arts, counseling, teaching, and environmental work.'
+  };
+
+
+  text += traits[answers.zodiac] + '\n\n';
+
+
+// Numerology / Birth Date traits
+  const dateCategories = {
+    '01': 'People born on this date are natural leaders, confident, ambitious, and charismatic. They are innovative, enjoy taking initiative, and have strong communication skills. On the negative side, they can be stubborn, impatient, and sometimes overly self-centered or domineering.',
+    '10': 'People born on this date are natural leaders, confident, ambitious, and charismatic. They are innovative, enjoy taking initiative, and have strong communication skills. On the negative side, they can be stubborn, impatient, and sometimes overly self-centered or domineering.',
+    '19': 'People born on this date are natural leaders, confident, ambitious, and charismatic. They are innovative, enjoy taking initiative, and have strong communication skills. On the negative side, they can be stubborn, impatient, and sometimes overly self-centered or domineering.',
+    '28': 'People born on this date are natural leaders, confident, ambitious, and charismatic. They are innovative, enjoy taking initiative, and have strong communication skills. On the negative side, they can be stubborn, impatient, and sometimes overly self-centered or domineering.',
+
+
+    '02': 'Individuals with this birth number are sensitive, empathetic, and nurturing. They are diplomatic, cooperative, and value harmony in relationships. However, they can be indecisive, overly emotional, and sometimes depend too much on others’ approval.',
+    '11': 'Individuals with this birth number are sensitive, empathetic, and nurturing. They are diplomatic, cooperative, and value harmony in relationships. However, they can be indecisive, overly emotional, and sometimes depend too much on others’ approval.',
+    '20': 'Individuals with this birth number are sensitive, empathetic, and nurturing. They are diplomatic, cooperative, and value harmony in relationships. However, they can be indecisive, overly emotional, and sometimes depend too much on others’ approval.',
+    '29': 'Individuals with this birth number are sensitive, empathetic, and nurturing. They are diplomatic, cooperative, and value harmony in relationships. However, they can be indecisive, overly emotional, and sometimes depend too much on others’ approval.',
+
+
+    '03': 'Individuals are optimistic, adventurous, and intellectually curious. They love exploration, travel, and learning, with a generous and friendly nature. Negatively, they may be overconfident, careless, or easily distracted by too many interests.',
+    '12': 'Individuals are optimistic, adventurous, and intellectually curious. They love exploration, travel, and learning, with a generous and friendly nature. Negatively, they may be overconfident, careless, or easily distracted by too many interests.',
+    '21': 'Individuals are optimistic, adventurous, and intellectually curious. They love exploration, travel, and learning, with a generous and friendly nature. Negatively, they may be overconfident, careless, or easily distracted by too many interests.',
+    '30': 'Individuals are optimistic, adventurous, and intellectually curious. They love exploration, travel, and learning, with a generous and friendly nature. Negatively, they may be overconfident, careless, or easily distracted by too many interests.',
+
+
+    '04': 'People born on this number are ambitious, determined, and goal-oriented. They are resourceful, unconventional, and often find success in unique ways. However, they can be manipulative, restless, or prone to obsession and over-ambition.',
+    '13': 'People born on this number are ambitious, determined, and goal-oriented. They are resourceful, unconventional, and often find success in unique ways. However, they can be manipulative, restless, or prone to obsession and over-ambition.',
+    '22': 'People born on this number are ambitious, determined, and goal-oriented. They are resourceful, unconventional, and often find success in unique ways. However, they can be manipulative, restless, or prone to obsession and over-ambition.',
+    '31': 'People born on this number are ambitious, determined, and goal-oriented. They are resourceful, unconventional, and often find success in unique ways. However, they can be manipulative, restless, or prone to obsession and over-ambition.',
+
+
+    '05': 'People born on this date are analytical, practical, and intelligent. They excel in problem-solving, planning, and attention to detail. On the downside, they can be rigid, overly critical, or anxious about minor issues.',
+    '14': 'People born on this date are analytical, practical, and intelligent. They excel in problem-solving, planning, and attention to detail. On the downside, they can be rigid, overly critical, or anxious about minor issues.',
+    '23': 'People born on this date are analytical, practical, and intelligent. They excel in problem-solving, planning, and attention to detail. On the downside, they can be rigid, overly critical, or anxious about minor issues.',
+
+
+    '06': 'These people are loving, charming, and artistic. They value beauty, harmony, and relationships, often acting as caregivers and nurturers. On the flip side, they can be indulgent, overly sensitive, or sometimes possessive in relationships.',
+    '15': 'These people are loving, charming, and artistic. They value beauty, harmony, and relationships, often acting as caregivers and nurturers. On the flip side, they can be indulgent, overly sensitive, or sometimes possessive in relationships.',
+    '24': 'These people are loving, charming, and artistic. They value beauty, harmony, and relationships, often acting as caregivers and nurturers. On the flip side, they can be indulgent, overly sensitive, or sometimes possessive in relationships.',
+
+
+    '07': 'These individuals are spiritual, intuitive, and reflective. They have a deep understanding of life, are often philosophical, and may be drawn to helping others. Negatively, they can be detached, indecisive, or disconnected from practical realities.',
+    '16': 'These individuals are spiritual, intuitive, and reflective. They have a deep understanding of life, are often philosophical, and may be drawn to helping others. Negatively, they can be detached, indecisive, or disconnected from practical realities.',
+    '25': 'These individuals are spiritual, intuitive, and reflective. They have a deep understanding of life, are often philosophical, and may be drawn to helping others. Negatively, they can be detached, indecisive, or disconnected from practical realities.',
+
+
+    '08': 'Individuals are disciplined, responsible, and introspective. They have a patient, hardworking nature and are capable of achieving long-term success. Negatively, they may be overly serious, rigid, or prone to pessimism and self-doubt.',
+    '17': 'Individuals are disciplined, responsible, and introspective. They have a patient, hardworking nature and are capable of achieving long-term success. Negatively, they may be overly serious, rigid, or prone to pessimism and self-doubt.',
+    '26': 'Individuals are disciplined, responsible, and introspective. They have a patient, hardworking nature and are capable of achieving long-term success. Negatively, they may be overly serious, rigid, or prone to pessimism and self-doubt.',
+
+
+    '09': 'These people are energetic, adventurous, and courageous. They are enthusiastic, confident, and love taking risks, inspiring others with their boldness. Negatively, they may act impulsively, be aggressive, or struggle with patience and consistency.',
+    '18': 'These people are energetic, adventurous, and courageous. They are enthusiastic, confident, and love taking risks, inspiring others with their boldness. Negatively, they may act impulsively, be aggressive, or struggle with patience and consistency.',
+    '27': 'These people are energetic, adventurous, and courageous. They are enthusiastic, confident, and love taking risks, inspiring others with their boldness. Negatively, they may act impulsively, be aggressive, or struggle with patience and consistency.'
+  };
+
+
+
+
+  text += `Numerology (Birth Date) Insights: ${dateCategories[answers.birthDate]}`;
+
+  document.getElementById('resultText').innerText = text;
+
+  // Pass quiz data to form
+  document.getElementById('genderField').value = answers.gender;
+  document.getElementById('zodiacField').value = answers.zodiac;
+}
+
+// Button to move from result to form/payment
+document.getElementById('proceedToForm').onclick = () => {
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('form').style.display = 'block';
+};
+
+render();
+</script>
+
+</body>
+</html>
